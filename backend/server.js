@@ -1,19 +1,24 @@
 const jsonServer = require('json-server')
-const express = require('express')
 const server = jsonServer.create()
 const router = jsonServer.router('db.json')
 const middlewares = jsonServer.defaults()
 
+// Usando os middlewares padrões do json-server
 server.use(middlewares)
+
+// Middleware para adicionar um delay de 5 segundos
 server.use((req, res, next) => {
-  setTimeout(next, 500)
+  console.log('Delay de 2 segundos')
+
+  setTimeout(() => {
+    next()
+  }, 2000) // 2000 milissegundos = 2 segundos
 })
+
+// Usando o roteador do json-server
 server.use(router)
 
-const app = express()
-app.use(server)
-
 const PORT = 8000
-app.listen(PORT, "localhost", () => {
-  console.log('Server is running on...')
+server.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`)
 })
