@@ -1,50 +1,67 @@
-const checkIcon = (
-  <svg
-    className="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 flex-shrink-0"
-    aria-hidden="true"
-    xmlns="http://www.w3.org/2000/svg"
-    fill="currentColor"
-    viewBox="0 0 20 20"
-  >
-    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
-  </svg>
-)
+import { MakeWith } from './components/make-with'
+import { useEffect, useState } from 'react'
+import ky from 'ky'
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+
+interface Todo {
+  id: number
+  title: string
+  description: string
+  checked: boolean
+}
+
 function App() {
+  const [data, setData] = useState<Todo[]>([])
+  useEffect(() => {
+    ky.get('http://localhost:8000/todos')
+      .json()
+      .then((res) => {
+        setData(res as Todo[])
+      })
+  }, [])
   return (
     <div className="bg-slate-950 w-full h-screen flex flex-col justify-center items-center">
-      <h1 className="text-red-700 text-xl">Hello Vite + React!</h1>
-      <h2 className="text-lg text-red-900">Tecnologias usadas:</h2>
-
-      <ul className=" text-slate-500">
-        <li className="flex items-center">
-          {checkIcon}
-          TypeScript
-        </li>
-        <li className="flex items-center">
-          {checkIcon}
-          Vite
-        </li>
-        <li className="flex items-center">
-          {checkIcon}
-          TailwindCSS
-        </li>
-        <li className="flex items-center">
-          {checkIcon}
-          ESLint
-        </li>
-        <li className="flex items-center">
-          {checkIcon}
-          Prettier
-        </li>
-        <li className="flex items-center">
-          {checkIcon}
-          Ky
-        </li>
-        <li className="flex items-center">
-          {checkIcon}
-          React Query
-        </li>
-      </ul>
+      <MakeWith className="fixed top-2 right-2" />
+      <div>
+        <Table className="text-slate-300 max-w-lg overflow-y-scroll">
+          <TableCaption>Lista recente de tarefas</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[100px]">ID</TableHead>
+              <TableHead>Título</TableHead>
+              <TableHead>Descrição</TableHead>
+              <TableHead>Concluido</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {data.map((todo) => (
+              <TableRow key={todo.id}>
+                <TableCell className="font-medium">{todo.title}</TableCell>
+                <TableCell>{todo.title}</TableCell>
+                <TableCell>{todo.description}</TableCell>
+                <TableCell>{todo.checked ? 'Sim' : 'Não'}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TableCell colSpan={3}>Total concluídos:</TableCell>
+              <TableCell className="text-right">
+                {data.filter((todo) => todo.checked).length}
+              </TableCell>
+            </TableRow>
+          </TableFooter>
+        </Table>
+      </div>
     </div>
   )
 }
