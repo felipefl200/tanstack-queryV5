@@ -12,13 +12,6 @@ import {
   TableRow,
 } from '@/components/ui/table'
 
-interface Todo {
-  id: number
-  title: string
-  description: string
-  checked: boolean
-}
-
 function App() {
   const [data, setData] = useState<Todo[]>([])
   useEffect(() => {
